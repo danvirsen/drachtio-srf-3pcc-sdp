@@ -5,13 +5,16 @@ app.invite(async (req, res) => {
   try {
     const { uas, uac } = await app.createB2BUA(req, res, "sip:service@172.29.0.11:6060");
 
-    console.log("Successfully set up call");
-
     console.log(`\n=============== Call "${req.get("Subject")}" Start ===============\n`);
+
+    uas.on("ack", () => {
+      console.log(`UAS ACK received for call "${req.get("Subject")}"`);
+    });
+
     console.log("UAC Remote SDP:");
     console.log(uac.remote.sdp + "\n");
     console.log("UAS Remote SDP:");
-    console.log(uas.remote.sdp );
+    console.log(uas.remote.sdp);
     console.log(`=============== Call "${req.get("Subject")}" End ===============\n`);
 
     uac.on("destroy", () => uas.destroy());
