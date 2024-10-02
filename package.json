@@ -1,0 +1,14 @@
+{
+  "name": "drachtio-3pcc-bug",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "drachtio-srf": "^5.0.0"
+  }
+}

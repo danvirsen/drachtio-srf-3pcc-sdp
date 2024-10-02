@@ -1,0 +1,57 @@
+services:
+  drachtio:
+    image: drachtio/drachtio-server:latest
+    command: drachtio --contact "sip:*;transport=udp" --loglevel debug --sofia-loglevel 3
+    ports:
+      - 5060:5060/udp
+      - 9022:9022/tcp
+    depends_on:
+      - uas
+    networks:
+      drachtio-test:
+        ipv4_address: 172.29.0.10
+
+  uas:
+    image: drachtio/sipp:latest
+    command: sipp -p 6060 -sf /tmp/uas.xml
+    ports:
+      - 6060:6060/udp
+    volumes:
+      - ./sipp:/tmp
+    networks:
+      drachtio-test:
+        ipv4_address: 172.29.0.11
+
+  drachtio-srf:
+    build: .
+    depends_on:
+      - drachtio
+    networks:
+      drachtio-test:
+        ipv4_address: 172.29.0.20
+
+  uac:
+    image: drachtio/sipp:latest
+    command: sipp -sf /tmp/uac.xml 172.29.0.10:5060 -l 1 -m 1
+    volumes:
+      - ./sipp:/tmp
+    networks:
+      drachtio-test:
+        ipv4_address: 172.29.0.30
+  
+  uac-3pcc:
+    image: drachtio/sipp:latest
+    command: sipp -sf /tmp/uac-3pcc.xml 172.29.0.10:5060 -l 1 -m 1
+    volumes:
+      - ./sipp:/tmp
+    networks:
+      drachtio-test:
+        ipv4_address: 172.29.0.31
+
+
+networks:
+  drachtio-test:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.29.0.0/16
